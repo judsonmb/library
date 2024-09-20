@@ -23,8 +23,8 @@ class m240920_204044_create_customers_table extends Migration
             'state' => $this->string()->notNull(),
             'complement' => $this->string(),
             'gender' => "ENUM('M', 'F') NOT NULL",
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
+            'created_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
+            'updated_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ]);
 
         $this->createIndex('idx-customers-document', 'customers', 'document');
