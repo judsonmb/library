@@ -15,8 +15,6 @@ class AuthService
         $user->username = $username;
         $user->password_hash = Yii::$app->security->generatePasswordHash($password);
         $user->auth_key = Yii::$app->security->generateRandomString();
-        $user->created_at = time();
-        $user->updated_at = time();
 
         if (!$user->save()) {
             throw new Exception('Create user error: ' . implode(", ", $user->getFirstErrors()));

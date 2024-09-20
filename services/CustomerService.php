@@ -50,8 +50,6 @@ class CustomerService
         $customer->state = $model->state;
         $customer->complement = $model->complement;
         $customer->gender = $model->gender;
-        $customer->created_at = time();
-        $customer->updated_at = time();
 
         if ($customer->save()) {
             return $customer->id;
