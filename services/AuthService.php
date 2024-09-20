@@ -38,6 +38,10 @@ class AuthService
             throw new Exception('Credenciais inválidas.');
         }
 
-        return Yii::$app->security->generateRandomString();
+        $token = Yii::$app->security->generateRandomString();
+        $user->auth_key = $token;
+        $user->save(false);
+
+        return $token;
     }
 }

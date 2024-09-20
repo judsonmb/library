@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use Yii;
 use yii\rest\Controller;
+use yii\web\Response;
+use yii\filters\auth\HttpBearerAuth;
 use app\models\CustomerForm;
 use app\services\CustomerService;
 
@@ -17,9 +19,19 @@ class CustomerController extends Controller
         parent::__construct($id, $module, $config);
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => HttpBearerAuth::class,
+                'only' => ['create'],
+            ],
+        ];
+    }
+
     public function actionCreate()
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
         $model = new CustomerForm();
         $request = Yii::$app->request->post();
@@ -28,16 +40,25 @@ class CustomerController extends Controller
 
         if (!$model->validate()) {
             Yii::$app->response->statusCode = 422;
-            return ['error' => $model->getErrors()];
+            return [
+                'status' => 'error',
+                'errors' => $model->getErrors(),
+            ];
         }
 
         try {
             $customerId = $this->customerService->register($model);
             Yii::$app->response->statusCode = 201;
-            return ['message' => 'Customer created successfully.', 'customer_id' => $customerId];
+            return [
+                'message' => 'Customer created successfully.',
+                'customer_id' => $customerId,
+            ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
-            return ['error' => $e->getMessage()];
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ];
         }
     }
 }
