@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\rest\Controller;
-use yii\web\Response;
-use yii\filters\auth\HttpBearerAuth;
 use app\models\BookForm;
 use app\services\BookService;
+use Yii;
+use yii\filters\auth\HttpBearerAuth;
+use yii\rest\Controller;
+use yii\web\Response;
 
 class BookController extends Controller
 {
@@ -47,12 +47,14 @@ class BookController extends Controller
 
             if (empty($books)) {
                 Yii::$app->response->statusCode = 404;
+
                 return ['message' => 'No results found'];
             }
 
             return ['data' => $books];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
+
             return ['message' => $e->getMessage()];
         }
     }
@@ -68,18 +70,21 @@ class BookController extends Controller
 
         if (!$model->validate()) {
             Yii::$app->response->statusCode = 422;
+
             return ['errors' => $model->getErrors()];
         }
 
         try {
             $book = $this->bookService->register($model);
             Yii::$app->response->statusCode = 201;
+
             return [
                 'message' => 'Book created successfully.',
                 'book_id' => $book->id,
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
+
             return ['message' => $e->getMessage()];
         }
     }

@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
+use app\models\LoginForm;
+use app\models\RegisterForm;
+use app\services\AuthService;
 use Yii;
 use yii\rest\Controller;
 use yii\web\Response;
-use app\models\RegisterForm;
-use app\models\LoginForm;
-use app\services\AuthService;
 
 class AuthController extends Controller
 {
@@ -30,18 +30,21 @@ class AuthController extends Controller
 
         if (!$model->validate()) {
             Yii::$app->response->statusCode = 422;
+
             return ['error' => $model->getErrors()];
         }
 
         try {
             $user = $this->authService->register($model);
             Yii::$app->response->statusCode = 201;
+
             return [
                 'message' => 'User created successfully.',
                 'user_id' => $user->id,
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
+
             return ['error' => $e->getMessage()];
         }
     }
@@ -57,6 +60,7 @@ class AuthController extends Controller
 
         if (!$model->validate()) {
             Yii::$app->response->statusCode = 422;
+
             return ['error' => $model->getErrors()];
         }
 
@@ -64,7 +68,8 @@ class AuthController extends Controller
             $token = $this->authService->login($model->username, $model->password);
             return ['token' => $token];
         } catch (\Exception $e) {
-            Yii::$app->response->statusCode = 401; // Unauthorized
+            Yii::$app->response->statusCode = 401;
+
             return ['error' => $e->getMessage()];
         }
     }

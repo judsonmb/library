@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\rest\Controller;
-use yii\web\Response;
-use yii\filters\auth\HttpBearerAuth;
 use app\models\CustomerForm;
 use app\services\CustomerService;
+use Yii;
+use yii\filters\auth\HttpBearerAuth;
+use yii\rest\Controller;
+use yii\web\Response;
 
 class CustomerController extends Controller
 {
@@ -46,6 +46,7 @@ class CustomerController extends Controller
 
             if (empty($customers)) {
                 Yii::$app->response->statusCode = 404;
+
                 return ['message' => 'No results found'];
             }
 
@@ -55,6 +56,7 @@ class CustomerController extends Controller
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
+
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
@@ -70,18 +72,21 @@ class CustomerController extends Controller
 
         if (!$model->validate()) {
             Yii::$app->response->statusCode = 422;
+
             return ['status' => 'error', 'errors' => $model->getErrors()];
         }
 
         try {
             $customerId = $this->customerService->register($model);
             Yii::$app->response->statusCode = 201;
+
             return [
                 'message' => 'Customer created successfully.',
                 'customer_id' => $customerId,
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
+
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
