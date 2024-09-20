@@ -59,6 +59,7 @@ $config = [
                 'auth/register' => 'auth/register',
                 'auth/login' => 'auth/login',
                 'POST,OPTIONS,customer/create' => 'customer/create',
+                'GET,OPTIONS,customer' => 'customer/index',
             ],
         ],
     ],

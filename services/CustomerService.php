@@ -8,6 +8,36 @@ use Yii;
 
 class CustomerService
 {
+    public function listCustomers($limit, $offset, $orderBy, $filterName, $filterDocument)
+    {
+        $query = Customer::find();
+
+        if ($filterName) {
+            $query->andWhere(['like', 'name', $filterName]);
+        }
+
+        if ($filterDocument) {
+            $query->andWhere(['document' => $filterDocument]);
+        }
+
+        switch ($orderBy) {
+            case 'name':
+                $query->orderBy(['name' => SORT_ASC]);
+                break;
+            case 'cpf':
+                $query->orderBy(['cpf' => SORT_ASC]);
+                break;
+            case 'city':
+                $query->orderBy(['city' => SORT_ASC]);
+                break;
+            default:
+                $query->orderBy(['name' => SORT_ASC]);
+                break;
+        }
+
+        return $query->offset($offset)->limit($limit)->all();
+    }
+
     public function register(CustomerForm $model)
     {
         $customer = new Customer();

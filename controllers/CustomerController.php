@@ -24,9 +24,37 @@ class CustomerController extends Controller
         return [
             [
                 'class' => HttpBearerAuth::class,
-                'only' => ['create'],
+                'only' => ['index','create'],
             ],
         ];
+    }
+
+    public function actionIndex()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $request = Yii::$app->request;
+
+        $limit = $request->get('limit', 10);
+        $offset = $request->get('offset', 0);
+        $orderBy = $request->get('order_by', 'name');
+        $filterName = $request->get('filter_name', null);
+        $filterDocument = $request->get('filter_document', null);
+
+        try {
+            $customers = $this->customerService->listCustomers(
+                $limit, $offset, $orderBy, $filterName, $filterDocument
+            );
+            return [
+                'data' => $customers,
+            ];
+        } catch (\Exception $e) {
+            Yii::$app->response->statusCode = 500;
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ];
+        }
     }
 
     public function actionCreate()
