@@ -5,10 +5,18 @@ namespace app\controllers;
 use Yii;
 use yii\rest\Controller;
 use app\models\CustomerForm;
-use app\models\Customer;
+use app\services\CustomerService;
 
 class CustomerController extends Controller
 {
+    private $customerService;
+
+    public function __construct($id, $module, CustomerService $customerService, $config = [])
+    {
+        $this->customerService = $customerService;
+        parent::__construct($id, $module, $config);
+    }
+
     public function actionCreate()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -23,24 +31,13 @@ class CustomerController extends Controller
             return ['error' => $model->getErrors()];
         }
 
-        $customer = new Customer();
-        $customer->name = $model->name;
-        $customer->document = $model->document;
-        $customer->zip_code = $model->zip_code;
-        $customer->street = $model->street;
-        $customer->number = $model->number;
-        $customer->city = $model->city;
-        $customer->state = $model->state;
-        $customer->complement = $model->complement;
-        $customer->gender = $model->gender;
-        $customer->created_at = time();
-        $customer->updated_at = time();
-
-        if ($customer->save()) {
-            return ['message' => 'Customer registered successfully.', 'customer_id' => $customer->id];
-        } else {
+        try {
+            $customerId = $this->customerService->register($model);
+            Yii::$app->response->statusCode = 201;
+            return ['message' => 'Customer created successfully.', 'customer_id' => $customerId];
+        } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
-            return ['error' => 'Error registering customer.'];
+            return ['error' => $e->getMessage()];
         }
     }
 }

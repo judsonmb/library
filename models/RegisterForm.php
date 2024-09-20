@@ -15,9 +15,9 @@ class RegisterForm extends Model
         return [
             [['username', 'password', 'confirm_password'], 'required'],
             ['username', 'string', 'min' => 3, 'max' => 255],
-            ['username', 'unique', 'targetClass' => User::class, 'message' => 'Este nome de usuário já está em uso.'],
+            ['username', 'unique', 'targetClass' => User::class],
             ['password', 'string', 'min' => 6],
-            ['confirm_password', 'compare', 'compareAttribute' => 'password', 'message' => "As senhas não correspondem."],
+            ['confirm_password', 'compare', 'compareAttribute' => 'password'],
         ];
     }
 }
