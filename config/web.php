@@ -51,6 +51,7 @@ $config = [
             'rules' => [
                 'auth/register' => 'auth/register',
                 'auth/login' => 'auth/login',
+                'POST,OPTIONS,customer/create' => 'customer/create',
             ],
         ],
     ],

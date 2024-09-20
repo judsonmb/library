@@ -29,7 +29,7 @@ class AuthController extends Controller
         $model->load($request, '');
 
         if (!$model->validate()) {
-            Yii::$app->response->statusCode = 422; // Define o código de status 422
+            Yii::$app->response->statusCode = 422;
             return ['error' => $model->getErrors()];
         }
 
