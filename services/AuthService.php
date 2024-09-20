@@ -3,28 +3,42 @@
 namespace app\services;
 
 use app\models\User;
-use app\components\JwtAuth;
 use Yii;
 use yii\base\Exception;
+use app\models\RegisterForm;
 
 class AuthService
 {
-    public function register($username, $password, $confirmPassword)
+    /**
+     * Register a new user.
+     *
+     * @param RegisterForm $model The model containing registration data.
+     * @return User The created user.
+     * @throws Exception If the user cannot be created.
+     */
+    public function register(RegisterForm $model): User
     {
         $user = new User();
-        $user->username = $username;
-        $user->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $user->username = $model->username;
+        $user->password_hash = Yii::$app->security->generatePasswordHash($model->password);
         $user->auth_key = Yii::$app->security->generateRandomString();
 
         if (!$user->save()) {
-            throw new Exception('Create user error: ' . implode(", ", $user->getFirstErrors()));
+            throw new Exception('Error while creating user: ' . implode(", ", $user->getFirstErrors()));
         }
 
         return $user;
     }
 
-
-    public function login($username, $password)
+    /**
+     * Authenticate a user and generate a token.
+     *
+     * @param string $username The username of the user.
+     * @param string $password The password of the user.
+     * @return string The generated token.
+     * @throws Exception If the credentials are invalid.
+     */
+    public function login(string $username, string $password): string
     {
         $user = User::findByUsername($username);
 

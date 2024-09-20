@@ -11,7 +11,7 @@ use app\services\AuthService;
 
 class AuthController extends Controller
 {
-    private $authService;
+    private AuthService $authService;
 
     public function __construct($id, $module, AuthService $authService, $config = [])
     {
@@ -34,11 +34,11 @@ class AuthController extends Controller
         }
 
         try {
-            $user = $this->authService->register($model->username, $model->password, $model->confirm_password);
+            $user = $this->authService->register($model);
             Yii::$app->response->statusCode = 201;
             return [
-                'message' => 'User created successfully.', 
-                'user_id' => $user->id
+                'message' => 'User created successfully.',
+                'user_id' => $user->id,
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
@@ -56,6 +56,7 @@ class AuthController extends Controller
         $model->load($request, '');
 
         if (!$model->validate()) {
+            Yii::$app->response->statusCode = 422;
             return ['error' => $model->getErrors()];
         }
 
@@ -63,6 +64,7 @@ class AuthController extends Controller
             $token = $this->authService->login($model->username, $model->password);
             return ['token' => $token];
         } catch (\Exception $e) {
+            Yii::$app->response->statusCode = 401; // Unauthorized
             return ['error' => $e->getMessage()];
         }
     }

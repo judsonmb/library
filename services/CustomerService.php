@@ -2,14 +2,29 @@
 
 namespace app\services;
 
-use app\models\CustomerForm;
 use app\models\Customer;
-use Yii;
+use app\models\CustomerForm;
+use yii\base\Exception;
 
 class CustomerService
 {
-    public function listCustomers($limit, $offset, $orderBy, $filterName, $filterDocument)
-    {
+    /**
+     * List customers with pagination and filtering.
+     *
+     * @param int $limit The number of records to return.
+     * @param int $offset The offset for pagination.
+     * @param string $orderBy The field to order by.
+     * @param string|null $filterName The name to filter by.
+     * @param string|null $filterDocument The document to filter by.
+     * @return Customer[] The list of customers.
+     */
+    public function listCustomers(
+        int $limit,
+        int $offset,
+        string $orderBy,
+        ?string $filterName,
+        ?string $filterDocument
+    ): array {
         $query = Customer::find();
 
         if ($filterName) {
@@ -38,7 +53,14 @@ class CustomerService
         return $query->offset($offset)->limit($limit)->all();
     }
 
-    public function register(CustomerForm $model)
+    /**
+     * Register a new customer.
+     *
+     * @param CustomerForm $model The model containing customer data.
+     * @return int The ID of the created customer.
+     * @throws Exception If the customer cannot be created.
+     */
+    public function register(CustomerForm $model): int
     {
         $customer = new Customer();
         $customer->name = $model->name;
@@ -51,10 +73,10 @@ class CustomerService
         $customer->complement = $model->complement;
         $customer->gender = $model->gender;
 
-        if ($customer->save()) {
-            return $customer->id;
-        } else {
-            throw new \Exception('Error registering customer.');
+        if (!$customer->save()) {
+            throw new Exception('Error while creating customer: ' . implode(", ", $customer->getFirstErrors()));
         }
+
+        return $customer->id;
     }
 }

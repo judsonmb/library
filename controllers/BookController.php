@@ -11,15 +11,15 @@ use app\services\BookService;
 
 class BookController extends Controller
 {
-    private $bookService;
+    private BookService $bookService;
 
-    public function __construct($id, $module, BookService $bookService, $config = [])
+    public function __construct($id, $module, BookService $bookService, array $config = [])
     {
         $this->bookService = $bookService;
         parent::__construct($id, $module, $config);
     }
 
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             [
@@ -29,7 +29,7 @@ class BookController extends Controller
         ];
     }
 
-    public function actionIndex()
+    public function actionIndex(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -47,23 +47,17 @@ class BookController extends Controller
 
             if (empty($books)) {
                 Yii::$app->response->statusCode = 404;
-                return [
-                    'message' => 'No results found',
-                ];
+                return ['message' => 'No results found'];
             }
 
-            return [
-                'data' => $books,
-            ];
+            return ['data' => $books];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
-            return [
-                'message' => $e->getMessage(),
-            ];
+            return ['message' => $e->getMessage()];
         }
     }
 
-    public function actionCreate()
+    public function actionCreate(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -74,9 +68,7 @@ class BookController extends Controller
 
         if (!$model->validate()) {
             Yii::$app->response->statusCode = 422;
-            return [
-                'errors' => $model->getErrors(),
-            ];
+            return ['errors' => $model->getErrors()];
         }
 
         try {
@@ -88,9 +80,7 @@ class BookController extends Controller
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
-            return [
-                'message' => $e->getMessage(),
-            ];
+            return ['message' => $e->getMessage()];
         }
     }
 }

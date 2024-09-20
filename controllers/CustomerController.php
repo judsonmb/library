@@ -11,25 +11,25 @@ use app\services\CustomerService;
 
 class CustomerController extends Controller
 {
-    private $customerService;
+    private CustomerService $customerService;
 
-    public function __construct($id, $module, CustomerService $customerService, $config = [])
+    public function __construct($id, $module, CustomerService $customerService, array $config = [])
     {
         $this->customerService = $customerService;
         parent::__construct($id, $module, $config);
     }
 
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             [
                 'class' => HttpBearerAuth::class,
-                'only' => ['index','create'],
+                'only' => ['index', 'create'],
             ],
         ];
     }
 
-    public function actionIndex()
+    public function actionIndex(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -43,12 +43,10 @@ class CustomerController extends Controller
 
         try {
             $customers = $this->customerService->listCustomers($limit, $offset, $orderBy, $filterName, $filterCpf);
-            
+
             if (empty($customers)) {
                 Yii::$app->response->statusCode = 404;
-                return [
-                    'message' => 'No results found',
-                ];
+                return ['message' => 'No results found'];
             }
 
             return [
@@ -57,14 +55,11 @@ class CustomerController extends Controller
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
-            return [
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
-    public function actionCreate()
+    public function actionCreate(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -75,10 +70,7 @@ class CustomerController extends Controller
 
         if (!$model->validate()) {
             Yii::$app->response->statusCode = 422;
-            return [
-                'status' => 'error',
-                'errors' => $model->getErrors(),
-            ];
+            return ['status' => 'error', 'errors' => $model->getErrors()];
         }
 
         try {
@@ -90,10 +82,7 @@ class CustomerController extends Controller
             ];
         } catch (\Exception $e) {
             Yii::$app->response->statusCode = 500;
-            return [
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 }
