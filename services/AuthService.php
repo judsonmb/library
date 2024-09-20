@@ -11,10 +11,6 @@ class AuthService
 {
     public function register($username, $password, $confirmPassword)
     {
-        if ($password !== $confirmPassword) {
-            throw new Exception('As senhas não coincidem.');
-        }
-
         $user = new User();
         $user->username = $username;
         $user->password_hash = Yii::$app->security->generatePasswordHash($password);
@@ -23,7 +19,7 @@ class AuthService
         $user->updated_at = time();
 
         if (!$user->save()) {
-            throw new Exception('Erro ao criar usuário: ' . implode(", ", $user->getFirstErrors()));
+            throw new Exception('Create user error: ' . implode(", ", $user->getFirstErrors()));
         }
 
         return $user;
@@ -35,7 +31,7 @@ class AuthService
         $user = User::findByUsername($username);
 
         if (!$user || !Yii::$app->security->validatePassword($password, $user->password_hash)) {
-            throw new Exception('Credenciais inválidas.');
+            throw new Exception('Invalid Credentials.');
         }
 
         $token = Yii::$app->security->generateRandomString();
