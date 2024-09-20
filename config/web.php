@@ -60,6 +60,8 @@ $config = [
                 'auth/login' => 'auth/login',
                 'POST,OPTIONS,customer/create' => 'customer/create',
                 'GET,OPTIONS,customer' => 'customer/index',
+                'POST,OPTIONS,book/create' => 'book/create',
+                'GET,OPTIONS,book/index' => 'book/index',
             ],
         ],
     ],
