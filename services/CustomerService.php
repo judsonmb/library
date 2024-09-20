@@ -65,7 +65,7 @@ class CustomerService
         $customer = new Customer();
         $customer->name = $model->name;
         $customer->document = $model->document;
-        $customer->zip_code = $model->zip_code;
+        $customer->zip_code = str_replace('-', '', $model->zip_code);
         $customer->street = $model->street;
         $customer->number = $model->number;
         $customer->city = $model->city;

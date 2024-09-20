@@ -64,7 +64,7 @@ class BookService
     public function register(BookForm $model): Book
     {
         $book = new Book();
-        $book->isbn = $model->isbn;
+        $book->isbn = str_replace('-', '', $model->isbn);
         $book->title = $model->title;
         $book->author = $model->author;
         $book->price = $model->price;
