@@ -39,13 +39,20 @@ class CustomerController extends Controller
         $offset = $request->get('offset', 0);
         $orderBy = $request->get('order_by', 'name');
         $filterName = $request->get('filter_name', null);
-        $filterDocument = $request->get('filter_document', null);
+        $filterCpf = $request->get('filter_cpf', null);
 
         try {
-            $customers = $this->customerService->listCustomers(
-                $limit, $offset, $orderBy, $filterName, $filterDocument
-            );
+            $customers = $this->customerService->listCustomers($limit, $offset, $orderBy, $filterName, $filterCpf);
+            
+            if (empty($customers)) {
+                Yii::$app->response->statusCode = 404;
+                return [
+                    'message' => 'No results found',
+                ];
+            }
+
             return [
+                'status' => 'success',
                 'data' => $customers,
             ];
         } catch (\Exception $e) {
