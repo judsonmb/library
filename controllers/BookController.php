@@ -6,8 +6,8 @@ use Yii;
 use yii\rest\Controller;
 use yii\web\Response;
 use yii\filters\auth\HttpBearerAuth;
-use app\services\BookService;
 use app\models\BookForm;
+use app\services\BookService;
 
 class BookController extends Controller
 {
@@ -24,9 +24,43 @@ class BookController extends Controller
         return [
             [
                 'class' => HttpBearerAuth::class,
-                'only' => ['create'],
+                'only' => ['index', 'create'],
             ],
         ];
+    }
+
+    public function actionIndex()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $request = Yii::$app->request;
+
+        $limit = $request->get('limit', 10);
+        $offset = $request->get('offset', 0);
+        $orderBy = $request->get('order_by', 'title');
+        $filterTitle = $request->get('filter_title', null);
+        $filterAuthor = $request->get('filter_author', null);
+        $filterIsbn = $request->get('filter_isbn', null);
+
+        try {
+            $books = $this->bookService->listBooks($limit, $offset, $orderBy, $filterTitle, $filterAuthor, $filterIsbn);
+
+            if (empty($books)) {
+                Yii::$app->response->statusCode = 404;
+                return [
+                    'message' => 'No results found',
+                ];
+            }
+
+            return [
+                'data' => $books,
+            ];
+        } catch (\Exception $e) {
+            Yii::$app->response->statusCode = 500;
+            return [
+                'message' => $e->getMessage(),
+            ];
+        }
     }
 
     public function actionCreate()
